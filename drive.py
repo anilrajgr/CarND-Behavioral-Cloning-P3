@@ -12,7 +12,7 @@ from PIL import Image
 from flask import Flask
 from io import BytesIO
 
-from keras.models import load_model
+from keras.models import load_model, model_from_json
 import h5py
 from keras import __version__ as keras_version
 
@@ -40,10 +40,12 @@ class SimplePIController:
         # integral error
         self.integral += self.error
 
+        print("--", measurement, self.error, self.integral, self.Kp * self.error + self.Ki * self.integral)
+
         return self.Kp * self.error + self.Ki * self.integral
 
 
-controller = SimplePIController(0.1, 0.002)
+controller = SimplePIController(0.01, 0.0002)
 set_speed = 9
 controller.set_desired(set_speed)
 
@@ -61,11 +63,11 @@ def telemetry(sid, data):
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
         image_array = np.asarray(image)
-        steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
+        steering_angle = float(model.predict( [image_array[None, :, :, :], image_array[None, :, :, :], image_array[None, :, :, :]], batch_size=1))
 
         throttle = controller.update(float(speed))
 
-        print(steering_angle, throttle)
+        print(steering_angle, throttle, speed)
         send_control(steering_angle, throttle)
 
         # save frame
@@ -119,7 +121,12 @@ if __name__ == '__main__':
         print('You are using Keras version ', keras_version,
               ', but the model was built using ', model_version)
 
-    model = load_model(args.model)
+    json_file = open('model.json', 'r')
+    model_json = json_file.read()
+    json_file.close()
+    model = model_from_json(model_json)
+    model.load_weights(args.model)
+    # model = load_model(args.model)
 
     if args.image_folder != '':
         print("Creating image folder at {}".format(args.image_folder))
