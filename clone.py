@@ -19,7 +19,7 @@ print(len(validation_samples))
 import sklearn
 import random
 
-batch_size=128
+batch_size=32
 
 def generator(samples, batch_size=batch_size):
   num_samples = len(samples)
@@ -32,9 +32,15 @@ def generator(samples, batch_size=batch_size):
       for batch_sample in batch_samples:
         name = 'data/'+batch_sample[0].split('\\')[-1]
         center_image = cv2.imread(name)
+        plt.imshow(center_image)
+        plt.show()
+        quit()
         center_angle = float(batch_sample[3])
         images.append(center_image)
         angles.append(center_angle)
+        # Mirror image
+        images.append(cv2.flip(center_image,1))
+        angles.append(center_angle*(-1.0))
       X_train = np.array(images)
       y_train = np.array(angles)
       yield sklearn.utils.shuffle(X_train, y_train)
@@ -67,6 +73,6 @@ model.add(Dense(1))
 model.compile(loss='mse', optimizer='adam')
 # model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=5)
 # model.fit(X_train, y_train, validation_split=0.2, shuffle=True, epochs=3)
-model.fit_generator(train_generator, steps_per_epoch=len(train_samples), validation_data=validation_generator, validation_steps=len(validation_samples), epochs=3)
+model.fit_generator(train_generator, steps_per_epoch=2*len(train_samples)/batch_size, validation_data=validation_generator, validation_steps=2*len(validation_samples)/batch_size, epochs=3)
 
 model.save('model.h5')
