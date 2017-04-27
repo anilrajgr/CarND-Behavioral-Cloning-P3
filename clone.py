@@ -34,7 +34,6 @@ def generator(samples, batch_size=batch_size):
         center_image = cv2.imread(name)
         plt.imshow(center_image)
         plt.show()
-        quit()
         center_angle = float(batch_sample[3])
         images.append(center_image)
         angles.append(center_angle)
