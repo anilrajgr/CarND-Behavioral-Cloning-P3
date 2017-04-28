@@ -102,17 +102,33 @@ with open("data/driving_log.csv") as csvfile:
   for line in reader:
     lines.append(line)
     
+left_image_fix = 0.17
+right_image_fix = -0.2
 images = []
 measurements = []
 for line in lines:
-  source_path = line[0]
-  filename = source_path.split('\\')[-1]
-  current_path = 'data/' + filename
+  #--- Center Image --
+  current_path = 'data/' + line[0]
   image = cv2.imread(current_path)
   measurement = float(line[3])
   images.append(image)
   measurements.append(measurement)
-  # Mirror image
+  images.append(cv2.flip(image,1))
+  measurements.append(measurement*(-1.0))
+  #--- Left Image --
+  current_path = 'data/' + line[1]
+  image = cv2.imread(current_path)
+  measurement = float(line[3])+left_image_fix
+  images.append(image)
+  measurements.append(measurement)
+  images.append(cv2.flip(image,1))
+  measurements.append(measurement*(-1.0))
+  #--- Right Image --
+  current_path = 'data/' + line[2]
+  image = cv2.imread(current_path)
+  measurement = float(line[3])+right_image_fix
+  images.append(image)
+  measurements.append(measurement)
   images.append(cv2.flip(image,1))
   measurements.append(measurement*(-1.0))
 
@@ -126,7 +142,7 @@ from keras.layers.convolutional import MaxPooling2D
 
 model = Sequential()
 model.add(Lambda(lambda x: x/127.5-1.0, input_shape=(160,320,3)))
-model.add(Cropping2D(cropping=((70,10),(0,0))))
+model.add(Cropping2D(cropping=((70,25),(0,0))))
 model.add(Convolution2D(24,5,5,subsample=(2,2),activation="relu"))
 model.add(Dropout(0.25))
 model.add(Convolution2D(36,5,5,subsample=(2,2),activation="relu"))
@@ -148,6 +164,6 @@ model.add(Dense(1))
 
 model.compile(loss='mse', optimizer='adam')
 # model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=5)
-model.fit(X_train, y_train, validation_split=0.2, shuffle=True, epochs=2)
+model.fit(X_train, y_train, validation_split=0.2, shuffle=True, epochs=3)
 
 model.save('model.h5')
