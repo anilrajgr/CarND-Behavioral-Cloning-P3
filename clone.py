@@ -96,6 +96,10 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+images = []
+measurements = []
+
+##-----------------------------------------
 lines = []
 with open("data/driving_log.csv") as csvfile:
   reader = csv.reader(csvfile)
@@ -103,9 +107,7 @@ with open("data/driving_log.csv") as csvfile:
     lines.append(line)
     
 left_image_fix = 0.17
-right_image_fix = -0.2
-images = []
-measurements = []
+right_image_fix = -0.17
 for line in lines:
   #--- Center Image --
   current_path = 'data/' + line[0]
@@ -131,6 +133,147 @@ for line in lines:
   measurements.append(measurement)
   images.append(cv2.flip(image,1))
   measurements.append(measurement*(-1.0))
+##-----------------------------------------
+"""
+lines = []
+with open("data1/driving_log.csv") as csvfile:
+  reader = csv.reader(csvfile)
+  for line in reader:
+    lines.append(line)
+    
+left_image_fix = 0.17
+right_image_fix = -0.17
+for line in lines:
+  #--- Center Image --
+  current_path = 'data/' + line[0]
+  image = cv2.imread(current_path)
+  measurement = float(line[3])
+  images.append(image)
+  measurements.append(measurement)
+  images.append(cv2.flip(image,1))
+  measurements.append(measurement*(-1.0))
+  #--- Left Image --
+  current_path = 'data/' + line[1]
+  image = cv2.imread(current_path)
+  measurement = float(line[3])+left_image_fix
+  images.append(image)
+  measurements.append(measurement)
+  images.append(cv2.flip(image,1))
+  measurements.append(measurement*(-1.0))
+  #--- Right Image --
+  current_path = 'data/' + line[2]
+  image = cv2.imread(current_path)
+  measurement = float(line[3])+right_image_fix
+  images.append(image)
+  measurements.append(measurement)
+  images.append(cv2.flip(image,1))
+  measurements.append(measurement*(-1.0))
+##-----------------------------------------
+lines = []
+with open("data2/driving_log.csv") as csvfile:
+  reader = csv.reader(csvfile)
+  for line in reader:
+    lines.append(line)
+    
+left_image_fix = 0.17
+right_image_fix = -0.17
+for line in lines:
+  #--- Center Image --
+  current_path = 'data/' + line[0]
+  image = cv2.imread(current_path)
+  measurement = float(line[3])
+  images.append(image)
+  measurements.append(measurement)
+  images.append(cv2.flip(image,1))
+  measurements.append(measurement*(-1.0))
+  #--- Left Image --
+  current_path = 'data/' + line[1]
+  image = cv2.imread(current_path)
+  measurement = float(line[3])+left_image_fix
+  images.append(image)
+  measurements.append(measurement)
+  images.append(cv2.flip(image,1))
+  measurements.append(measurement*(-1.0))
+  #--- Right Image --
+  current_path = 'data/' + line[2]
+  image = cv2.imread(current_path)
+  measurement = float(line[3])+right_image_fix
+  images.append(image)
+  measurements.append(measurement)
+  images.append(cv2.flip(image,1))
+  measurements.append(measurement*(-1.0))
+##-----------------------------------------
+lines = []
+with open("data3/driving_log.csv") as csvfile:
+  reader = csv.reader(csvfile)
+  for line in reader:
+    lines.append(line)
+    
+left_image_fix = 0.17
+right_image_fix = -0.17
+for line in lines:
+  #--- Center Image --
+  current_path = 'data/' + line[0]
+  image = cv2.imread(current_path)
+  measurement = float(line[3])
+  images.append(image)
+  measurements.append(measurement)
+  images.append(cv2.flip(image,1))
+  measurements.append(measurement*(-1.0))
+  #--- Left Image --
+  current_path = 'data/' + line[1]
+  image = cv2.imread(current_path)
+  measurement = float(line[3])+left_image_fix
+  images.append(image)
+  measurements.append(measurement)
+  images.append(cv2.flip(image,1))
+  measurements.append(measurement*(-1.0))
+  #--- Right Image --
+  current_path = 'data/' + line[2]
+  image = cv2.imread(current_path)
+  measurement = float(line[3])+right_image_fix
+  images.append(image)
+  measurements.append(measurement)
+  images.append(cv2.flip(image,1))
+  measurements.append(measurement*(-1.0))
+"""
+##-----------------------------------------
+# Drove on the right edge of the road
+# So, adding (-0.5) to the angle
+lines = []
+with open("data4/driving_log.csv") as csvfile:
+  reader = csv.reader(csvfile)
+  for line in reader:
+    lines.append(line)
+    
+left_image_fix = 0.17
+right_image_fix = -0.17
+for line in lines:
+  #--- Center Image --
+  current_path = 'data/' + line[0]
+  image = cv2.imread(current_path)
+  measurement = float(line[3])-0.5
+  images.append(image)
+  measurements.append(measurement)
+  images.append(cv2.flip(image,1))
+  measurements.append(measurement*(-1.0))
+  #--- Left Image --
+  current_path = 'data/' + line[1]
+  image = cv2.imread(current_path)
+  measurement = float(line[3])+left_image_fix-0.5
+  images.append(image)
+  measurements.append(measurement)
+  images.append(cv2.flip(image,1))
+  measurements.append(measurement*(-1.0))
+  #--- Right Image --
+  current_path = 'data/' + line[2]
+  image = cv2.imread(current_path)
+  measurement = float(line[3])+right_image_fix-0.5
+  images.append(image)
+  measurements.append(measurement)
+  images.append(cv2.flip(image,1))
+  measurements.append(measurement*(-1.0))
+##-----------------------------------------
 
 X_train = np.array(images)
 y_train = np.array(measurements)
