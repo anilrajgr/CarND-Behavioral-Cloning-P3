@@ -247,7 +247,7 @@ with open("data4/driving_log.csv") as csvfile:
     lines.append(line)
     
 left_image_fix = 0.17
-right_image_fix = -0.17
+right_image_fix = -0.5
 for line in lines:
   if float(line[3]) != 0.0:
     #--- Center Image --
@@ -314,6 +314,43 @@ for line in lines:
     images.append(cv2.flip(image,1))
     measurements.append(measurement*(-1.0))
 """
+##-----------------------------------------
+# Drove just after bridge, where there is no right shoulder
+# So, adding (-1.5) to the angle
+lines = []
+with open("data4/driving_log.csv") as csvfile:
+  reader = csv.reader(csvfile)
+  for line in reader:
+    lines.append(line)
+    
+left_image_fix = 0.17
+right_image_fix = -0.17
+for line in lines:
+  if float(line[3]) != 0.0:
+    #--- Center Image --
+    current_path = 'data/' + line[0]
+    image = cv2.imread(current_path)
+    measurement = float(line[3])-1.5
+    images.append(image)
+    measurements.append(measurement)
+    images.append(cv2.flip(image,1))
+    measurements.append(measurement*(-1.0))
+    #--- Left Image --
+    current_path = 'data/' + line[1]
+    image = cv2.imread(current_path)
+    measurement = float(line[3])+left_image_fix-1.5
+    images.append(image)
+    measurements.append(measurement)
+    images.append(cv2.flip(image,1))
+    measurements.append(measurement*(-1.0))
+    #--- Right Image --
+    current_path = 'data/' + line[2]
+    image = cv2.imread(current_path)
+    measurement = float(line[3])+right_image_fix-1.5
+    images.append(image)
+    measurements.append(measurement)
+    images.append(cv2.flip(image,1))
+    measurements.append(measurement*(-1.0))
 
 X_train = np.array(images)
 y_train = np.array(measurements)
